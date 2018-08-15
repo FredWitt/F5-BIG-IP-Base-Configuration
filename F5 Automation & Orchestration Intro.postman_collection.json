@@ -1,0 +1,1265 @@
+{
+	"variables": [],
+	"info": {
+		"name": "F5 Automation & Orchestration Intro",
+		"_postman_id": "79a3450c-f321-ea54-2c63-3e1247d9c58b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Lab 1.2 - API Authentication",
+			"description": "",
+			"item": [
+				{
+					"name": "Step 1: HTTP BASIC Authentication",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/ltm",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"admin\",\n    \"password\":\"admin\",\n    \"loginProviderName\":\"tmos\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 2: Get Authentication Token",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"admin\",\n    \"password\":\"admin\",\n    \"loginProviderName\":\"tmos\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 4: Set Authentication Token Timeout",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/shared/authz/tokens/{{big_ip_a_auth_token}}",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeout\":\"36000\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Setp 3: Verify Authentication Works",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/ltm",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lab 1.3 - Licensing with Manual Activation",
+			"description": "",
+			"item": [
+				{
+					"name": "Step 1: Send Base & Add-on Keys",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/shared/licensing/activation",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 4: Get License Status",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/shared/licensing/registration",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 2: Get Activation Status",
+					"request": {
+						"url": "https://{{bigip01-mgmt}}/mgmt/tm/ltm/pool",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 3: Install License File",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/shared/licensing/registration",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"licenseText\":\"\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lab 1.4 - Licensing with Automatic Activation",
+			"description": "",
+			"item": [
+				{
+					"name": "Step 1: Send Base & Add-on Keys",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/shared/licensing/activation",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"isAutomaticActivation\":\"true\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 5: Get License Status",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/shared/licensing/registration",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 4: Get Activation Status",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/shared/licensing/activation",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 2: Get Activation Status",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/shared/licensing/activation",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 3: Send EULA Acceptance",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/shared/licensing/activation",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"eulaText\":\"\",\n    \"isAutomaticActivation\":\"true\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lab 1.5 - Review/Set Device Settings",
+			"description": "",
+			"item": [
+				{
+					"name": " Step 7: Set root User Password",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/shared/authn/root",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"oldPassword\":\"default\",\n    \"newPassword\":\"\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 3: Get System DNS Settings",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/sys/dns",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 5: Get System NTP Settings",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/sys/ntp",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 1: Get System Global-Settings",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/sys/global-settings",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"baseRegKey\":\"\",\n    \"addOnKeys\":[],\n    \"automaticActivation\":false\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 4: Set System DNS Settings",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/sys/dns",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nameServers\": [\n    \"10.1.1.254\"\n  ],\n  \"search\": [\n    \"localhost\"\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 2: Set System Global-Settings",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/sys/global-settings",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"guiSetup\": \"disabled\",\n  \"hostname\": \"\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 6: Set System NTP Settings",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/sys/ntp",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"servers\": [\n    \"10.1.1.254\"\n  ],\n  \"timezone\": \"America/Los_Angeles\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 8: Set admin User Password",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/auth/user/admin",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\":\"\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lab 1.6 - Basic Network Connectivity",
+			"description": "",
+			"item": [
+				{
+					"name": " Step 1: Create a VLAN",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/net/vlan/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Internal\",\n  \"partition\": \"Common\",\n  \"autoLasthop\": \"default\",\n  \"cmpHash\": \"default\",\n  \"mtu\": \"1500\",\n  \"tag\": \"10\",\n  \"interfaces\": \n    [ \n        {\n            \"name\":\"1.1\",\n            \"tagged\":true\n        }\n    ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 4: Get Self IPs",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/net/self?expandSubcollections=true",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 6: Get Routes",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/net/route?expandSubcollections=true",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 3: Create a Self IP",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/net/self/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"name\": \"Self-Internal\",\n   \"partition\": \"Common\",\n   \"address\": \"10.1.10.1/24\",\n   \"floating\": \"disabled\",\n   \"trafficGroup\": \"/Common/traffic-group-local-only\",\n   \"vlan\": \"/Common/Internal\",\n   \"allowService\": [\n     \"default\"\n   ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 2: Get VLANs",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/net/vlan/?expandSubcollections=true",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 5: Create a Route",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/net/route",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Default\",\n  \"partition\": \"Common\",\n  \"gw\": \"10.1.20.254\",\n  \"mtu\": 0,\n  \"network\": \"0.0.0.0/0\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lab 1.7 - Build a Cluster",
+			"description": "",
+			"item": [
+				{
+					"name": "Step 7: Check Sync Group Status",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/syncStatus",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 8: Manually Sync DeviceGroup1",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/config-sync",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"command\":\"run\",\n    \"options\":[{\"to-group\":\"DeviceGroup1\"}]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 10: Get Traffic Group Properties",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/traffic-group/traffic-group-1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 13B: BIGIP-B is ACTIVE: Manually Failover Traffic Group copy",
+					"request": {
+						"url": "https://{{big_ip_b_mgmt}}/mgmt/tm/sys/failover",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"command\":\"run\",\n    \"trafficGroup\":\"traffic-group-1\",\n    \"standby\":true\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 9: Check Sync Group Status",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/syncStatus",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 4: Add BIGIP-B Device to CMI Trust on BIGIP-A",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/add-to-trust",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"command\":\"run\",\n    \"name\":\"Root\",\n    \"caDevice\":true,\n    \"device\":\"{{big_ip_b_mgmt}}\",\n    \"deviceName\":\"bigip-b.f5se.local\",\n    \"username\":\"admin\",\n    \"password\":\"admin\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 13A: BIGIP-A is ACTIVE: Manually Failover Traffic Group",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/sys/failover",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"command\":\"run\",\n    \"trafficGroup\":\"traffic-group-1\",\n    \"standby\":true\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 14: Get Traffic Group Failover States",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/traffic-group/traffic-group-1/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 5: Check Sync Group Status",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/syncStatus",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 2: Set BIGIP-A CMI Device Parameters",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/device/~Common~bigip-a.f5se.local",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"configsyncIp\": \"10.1.10.1\",\n  \"mirrorIp\": \"10.1.10.1\",\n  \"mirrorSecondaryIp\": \"any6\",\n  \"unicastAddress\": [\n    {\n      \"effectiveIp\": \"10.1.10.1\",\n      \"effectivePort\": 1026,\n      \"ip\": \"10.1.10.1\",\n      \"port\": 1026\n    }\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 3: Set BIGIP-B CMI Device Parameters",
+					"request": {
+						"url": "https://{{big_ip_b_mgmt}}/mgmt/tm/cm/device/~Common~bigip-b.f5se.local",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46YWRtaW4=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"configsyncIp\": \"10.1.10.2\",\n  \"mirrorIp\": \"10.1.10.2\",\n  \"mirrorSecondaryIp\": \"any6\",\n  \"unicastAddress\": [\n    {\n      \"effectiveIp\": \"10.1.10.2\",\n      \"effectivePort\": 1026,\n      \"ip\": \"10.1.10.2\",\n      \"port\": 1026\n    }\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 11: Change Traffic Group to use HA Order Failover",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/traffic-group/traffic-group-1",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"haOrder\": [\n    \"/Common/bigip-a.f5se.local\",\n    \"/Common/bigip-b.f5se.local\"\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 16: Get Self IPs",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/net/self?expandSubcollections=true",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 1: Rename the CMI Self Device",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/device",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"command\":\"mv\",\n    \"name\":\"bigip1\",\n    \"target\":\"bigip-a.f5se.local\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": " Step 15: Create a Floating Self IP",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/net/self/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"name\": \"Self-Internal-Floating\",\n   \"partition\": \"Common\",\n   \"address\": \"10.1.10.3/24\",\n   \"floating\": \"enabled\",\n   \"trafficGroup\": \"/Common/traffic-group-1\",\n   \"vlan\": \"/Common/Internal\",\n   \"allowService\": [\n     \"default\"\n   ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 6: Create Device Group",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/device-group",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"DeviceGroup1\",\n    \"type\":\"sync-failover\",\n    \"autoSync\":\"enabled\",\n    \"devices\": [ \"bigip-a.f5se.local\",\"bigip-b.f5se.local\" ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 12: Get Traffic Group Failover States",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/cm/traffic-group/traffic-group-1/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lab 1.8 - Build a Basic LTM Config",
+			"description": "",
+			"item": [
+				{
+					"name": "Step 3: Create a HTTP Profile",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/ltm/profile/http",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Lab1.8_http\",\n    \"insertXforwardedFor\":\"enabled\",\n    \"serverAgentName\":\"Lab_1.8\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 1: Create a HTTP Monitor",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/ltm/monitor/http",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Lab1.8_monitor\",\n    \"send\":\"GET / HTTP/1.0\\r\\n\\r\\n\",\n    \"recv\":\"Hello\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 5: Create a Virtual Server",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/ltm/virtual",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Lab1.8_vs\",\n    \"destination\":\"10.1.20.129:80\",\n    \"ipProtocol\":\"tcp\",\n    \"pool\":\"Lab1.8_pool\",\n    \"sourceAddressTranslation\": { \"type\":\"automap\" },\n    \"profiles\": [\n        { \"name\":\"/Common/Lab1.8_tcp_clientside\", \"context\":\"clientside\" },\n        { \"name\":\"/Common/tcp-wan-optimized\", \"context\":\"serverside\" },\n        \"/Common/Lab1.8_http\"\n    ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 4: Create a TCP Profile",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/ltm/profile/tcp",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Lab1.8_tcp_clientside\",\n    \"nagle\":\"disabled\",\n    \"sendBufferSize\":\"16000\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Step 2: Create a Pool",
+					"request": {
+						"url": "https://{{big_ip_a_mgmt}}/mgmt/tm/ltm/pool",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{big_ip_a_auth_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Lab1.8_pool\",\n    \"monitor\":\"/Common/Lab1.8_monitor\",\n    \"members\": [\"10.1.10.10:80\",\"10.1.10.11:80\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
